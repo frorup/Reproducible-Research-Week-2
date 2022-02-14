@@ -1,0 +1,55 @@
+---
+title: "Week2"
+date: "2/13/2022"
+output: html_document
+---
+
+## Step 1: Downloading, uncompressing and loading data
+
+The following code lines download the file activity.zip from the url provided and unzip the file. 
+
+```{r echo=TRUE}
+# Defining the urlprovided from the task description:
+urlProvided <-   "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+# Downloading the file 
+download.file(urlProvided, destfile = "activity.zip")
+# Unzip 
+unzip("activity.zip")
+# load data
+dataBase <- read.csv("activity.csv")
+# Convert date to date format
+dataBase$date <- as.Date(dataBase$date)
+head(dataBase)
+```
+## Step 2: Histogram of the total number of steps taken each day
+
+Sum steps per day, then plot using hist. 
+
+```{r echo=TRUE}
+stepsperday <- aggregate(dataBase$steps, list(Day = dataBase$date), FUN = sum )
+hist(stepsperday$x, breaks = 20, main = "Steps taken each day", xlab = "Steps by day")
+```
+
+## Step 3: Mean and median number of steps taken each day
+
+```{r echo=TRUE}
+mean(stepsperday$x, na.rm = TRUE)
+median(stepsperday$x, na.rm = TRUE)
+```
+
+## Step 4: Time series plot of the average number of steps taken
+```{r echo=TRUE}
+filt_dataBase <- dataBase[ is.na(dataBase$steps) != TRUE , ]
+stepsperinterval <- with(filt_dataBase, aggregate(steps, list(interval), FUN = mean ))
+with(stepsperinterval, plot(Group.1, x, type = "l", xlab = "Interval", ylab = "Steps"))
+
+```
+## The 5-minute interval that, on average, contains the maximum number of steps
+
+##Code to describe and show a strategy for imputing missing data
+
+## Histogram of the total number of steps taken each day after missing values are imputed
+
+##Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
+
+All of the R code needed to reproduce the results (numbers, plots, etc.) in the report
