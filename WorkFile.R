@@ -36,7 +36,7 @@ stepsperinterval[which(max(stepsperinterval$x)==stepsperinterval$x),]
 ####################################################################
 ### Total number of missing values in the data set
 print(sum(is.na(dataBase)))
-### Imputed Median 
+### Imputed Mean and Median 
 stepsperintMedian <- with(filt_dataBase, aggregate(steps, list(interval), FUN = median ))
 imputedMean <- dataBase
 imputedMedi <- dataBase
@@ -58,3 +58,22 @@ par(mfrow = c(1,3))
 hist(stepsperday$x, breaks = 20, main = "Original expluding NA", xlab = "Steps by day")
 hist(stepsdayMean$x, breaks = 20, main = "NA emputed with mean", xlab = "Steps by day")
 hist(stepsdayMedi$x, breaks = 20, main = "NA emputed with median", xlab = "Steps by day")
+
+####################################################################
+# Step 8
+####################################################################
+filt_dataBase$weekday <- weekdays(filt_dataBase$date, abbreviate = TRUE)
+filt_dataBase$weekend <- ifelse(filt_dataBase$weekday=="Sat" |              
+           filt_dataBase$weekday=="Sun", "Weekend", "Weekday" )
+plot_data <- aggregate(filt_dataBase$steps, 
+                          list(filt_dataBase$interval, filt_dataBase$weekend),
+                          FUN = sum)
+colnames(plot_data) <- c("Interval", "Weeksplit", "Steps")
+weekdayData <- plot_data[plot_data$Weeksplit == "Weekday", -2]
+weekendData <- plot_data[plot_data$Weeksplit == "Weekend", -2]
+
+par(mfrow = c(1,1))
+plot(weekdayData$Interval, weekdayData$Steps, type = "l", 
+     col = "black", xlab = "Interval", ylab = "Steps")
+points(weekendData$Interval, weekendData$Steps, type = "l", col = "red")
+legend("topright", type = "l", col = c("black", "red"), legend = c("Week day", "Weekend"))

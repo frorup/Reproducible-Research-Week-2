@@ -62,16 +62,80 @@ The original file imported contains a number of missing values (NA). The two eas
 * or using the median step value for the time interval
 
 ### Total number of missing values in the dataset
+```{r echo=TRUE}
+print(sum(is.na(dataBase)))
+print(sum(is.na(dataBase$steps)))
+```
+
+All the missing values are in the steps column. 
 
 ### Filling in all of the missing values creating emputed table
 
+```{r echo=TRUE}
+### Imputed Mean and Median 
+stepsperintMedian <- with(filt_dataBase, aggregate(steps, list(interval), FUN = median ))
+imputedMean <- dataBase
+imputedMedi <- dataBase
+entriesdb   <- dim(dataBase)[1]
+for ( i in seq(1,entriesdb)) {
+  if (is.na(imputedMean$steps[i]==TRUE)) {
+    
+    imputedMean$steps[i] <- 
+      stepsperinterval$Steps[stepsperinterval$Interval == imputedMean$interval[i]]
+    imputedMedi$steps[i] <- 
+      stepsperinterval$Steps[stepsperinterval$Interval == imputedMedi$interval[i]]
+  }
+  
+}
+### Calculating the sum per day using two types of emputed
+### data
+stepsdayMean <- aggregate(imputedMean$steps, list(Day = imputedMean$date), FUN = sum )
+stepsdayMedi <- aggregate(imputedMedi$steps, list(Day = imputedMedi$date), FUN = sum )
+
+```
+
 ### Step 7: Histogram of emputed data table
 
-### Activity patterns comparing weekdays and weekends?
+```{r echo=TRUE}
+par(mfrow = c(1,3))
+hist(stepsperday$x, breaks = 20, main = "Original excluding #NA", xlab = "Steps by day")
+hist(stepsdayMean$x, breaks = 20, main = "NA emputed with mean", xlab = "Steps by day")
+hist(stepsdayMedi$x, breaks = 20, main = "NA emputed with median", xlab = "Steps by day")
+
+summary(stepsperday$x)
+summary(stepsdayMean$x)
+summary(stepsdayMedi$x)
+```
 
 
-## Step 8: Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
+## Step 8:Activity patterns comparing weekdays and weekends?
+
+Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
+
+```{r echo=TRUE}
+####################################################################
+# Step 8
+####################################################################
+filt_dataBase$weekday <- weekdays(filt_dataBase$date, abbreviate = TRUE)
+filt_dataBase$weekend <- ifelse(filt_dataBase$weekday=="Sat" |              
+           filt_dataBase$weekday=="Sun", "Weekend", "Weekday" )
+plot_data <- aggregate(filt_dataBase$steps, 
+                          list(filt_dataBase$interval, filt_dataBase$weekend),
+                          FUN = mean)
+colnames(plot_data) <- c("Interval", "Weeksplit", "Steps")
+weekdayData <- plot_data[plot_data$Weeksplit == "Weekday", -2]
+weekendData <- plot_data[plot_data$Weeksplit == "Weekend", -2]
+
+par(mfrow = c(1,1))
+plot(weekdayData$Interval, weekdayData$Steps, type = "l", 
+     col = "black", xlab = "Interval", ylab = "Steps",
+     main = "Comparison of Average Number of Steps in Each Interval")
+points(weekendData$Interval, weekendData$Steps, type = "l", col = "red")
+legend("topright", lty = c(1,1), col = c("black", "red"), legend = c("Week day", "Weekend"))
+
+
+```
 
 ## Step 9: R Code
 
-All of the R code needed to reproduce the results (numbers, plots, etc.) in the report
+All of the R code needed to reproduce the results (numbers, plots, etc.) are summarized in the sections above. The final compilation is made in the markdown filt. The R file is a working progress and the results were copied into the markdown file, which is used as a final depository for the work. 
