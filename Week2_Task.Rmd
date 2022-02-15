@@ -44,12 +44,34 @@ stepsperinterval <- with(filt_dataBase, aggregate(steps, list(interval), FUN = m
 with(stepsperinterval, plot(Group.1, x, type = "l", xlab = "Interval", ylab = "Steps"))
 
 ```
-## The 5-minute interval that, on average, contains the maximum number of steps
 
-##Code to describe and show a strategy for imputing missing data
+## Step 5: The 5-min interval that contains the max steps
 
-## Histogram of the total number of steps taken each day after missing values are imputed
+The 5-minute interval that, on average, contains the maximum number of steps.
 
-##Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
+```{r echo=TRUE}
+colnames(stepsperinterval) <- c("Interval", "Steps")
+stepsperinterval[which(max(stepsperinterval$Steps)==stepsperinterval$Steps),]
+```
+
+## Step 6: Strategy for imputing missing data
+
+The original file imported contains a number of missing values (NA). The two easiest strategies for imputing missing data are: 
+
+* Using the the mean step value for the time interval
+* or using the median step value for the time interval
+
+### Total number of missing values in the dataset
+
+### Filling in all of the missing values creating emputed table
+
+### Step 7: Histogram of emputed data table
+
+### Activity patterns comparing weekdays and weekends?
+
+
+## Step 8: Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
+
+## Step 9: R Code
 
 All of the R code needed to reproduce the results (numbers, plots, etc.) in the report
